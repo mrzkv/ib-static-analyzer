@@ -1,0 +1,39 @@
+[project]
+name = "ib-static-analyzer"
+version = "0.1.0"
+description = "A static security analyzer for Python code using AST"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = []
+
+[tool.uv]
+package = true
+
+[project.scripts]
+astguard = "astguard.main:main"
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D203",    # 1 blank line required before class docstring (conflict with D211)
+    "D213",    # Multi-line docstring summary should start at the second line
+    "T201",    # print found
+    "COM812",  # Missing trailing comma (formatter conflict)
+    "ISC001",  # Implicit string concatenation (formatter conflict)
+    "RUF001",
+    "RUF002",
+    "RUF003",
+]
+
+[tool.astguard]
+include = ["*"]
+exclude = [".venv/*", "venv/*", "tests/*"]
+ignore = ["CWE-489"]  # Example rule ignore
+
+[dependency-groups]
+dev = [
+    "ruff>=0.14.10",
+]
