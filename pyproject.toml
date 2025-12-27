@@ -30,8 +30,7 @@ ignore = [
 
 [tool.astguard]
 include = ["*"]
-exclude = [".venv/*", "venv/*", "tests/*"]
-ignore = ["CWE-489"]  # Example rule ignore
+exclude = [".venv/*", "venv/*", ]
 
 [dependency-groups]
 dev = [
