@@ -52,6 +52,10 @@ Inline ignores:
         help="Output a short report (one line per finding)",
     )
 
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+
     args = parser.parse_args()
 
     path = Path(args.path)

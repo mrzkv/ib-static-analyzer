@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from enum import Enum
+from typing import List, Optional
 
 
 class SeverityLevel(str, Enum):
@@ -31,7 +32,7 @@ class CWEEntry:
     name: str
     description: str
     severity: SeverityLevel
-    patterns: list[str]
+    patterns: List[str]
     recommendation: str
     risk: str
 
@@ -151,8 +152,8 @@ class Finding:
     file_path: str
     line_number: int
     pattern: str
-    function_name: str | None = None
-    cwe_details: CWEEntry | None = None
+    function_name: Optional[str] = None
+    cwe_details: Optional[CWEEntry] = None
 
     def __post_init__(self) -> None:
         """Automatically complement CWE data during initialization."""

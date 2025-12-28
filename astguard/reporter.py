@@ -1,6 +1,7 @@
 """Module for generating code analysis reports."""
 
-from datetime import UTC, datetime
+from datetime import datetime, timezone
+from typing import List
 
 from .vulnerabilities import Finding
 
@@ -10,15 +11,15 @@ class ReportGenerator:
 
     def __init__(self) -> None:
         """Initialize the report generator."""
-        self.findings: list[Finding] = []
-        self.created_at = datetime.now(tz=UTC)
+        self.findings: List[Finding] = []
+        self.created_at = datetime.now(tz=timezone.utc)
 
     def add_finding(self, file_path: str, line_number: int, pattern: str) -> None:
         """Add a new finding to the report."""
         finding = Finding(file_path=file_path, line_number=line_number, pattern=pattern)
         self.findings.append(finding)
 
-    def add_findings(self, findings: list[Finding]) -> None:
+    def add_findings(self, findings: List[Finding]) -> None:
         """Add a list of findings to the report."""
         self.findings.extend(findings)
 

@@ -7,8 +7,12 @@ for more accurate vulnerability search and function argument analysis.
 import ast
 import fnmatch
 import sys
-import tomllib
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
 from pathlib import Path
+from typing import Dict, List, Optional, Set, Union
 
 from .vulnerabilities import FUNCTION_TO_CWE, SOURCES, Finding
 
@@ -19,11 +23,11 @@ class SecurityVisitor(ast.NodeVisitor):
     def __init__(
         self,
         file_path: Path,
-        patterns_to_cwe: dict[str, str],
-        function_sinks: dict[str, set[str]] | None = None,
+        patterns_to_cwe: Dict[str, str],
+        function_sinks: Optional[Dict[str, Set[str]]] = None,
         *,
         collect_only: bool = False,
-        file_lines: list[str] | None = None,
+        file_lines: Optional[List[str]] = None,
     ) -> None:
         """Initialize the visitor.
 
@@ -37,19 +41,19 @@ class SecurityVisitor(ast.NodeVisitor):
         """
         self.file_path = file_path
         self.patterns_to_cwe = patterns_to_cwe
-        self.findings: list[Finding] = []
-        self.current_function: str | None = None
+        self.findings: List[Finding] = []
+        self.current_function: Optional[str] = None
         # Track tainted variables in current scope
         # Key: variable name, Value: source info
-        self.tainted_vars: dict[str, str] = {}
+        self.tainted_vars: Dict[str, str] = {}
         # Track functions and their parameters that are passed to sinks
-        # Key: function name, Value: dict[param_name, set[cwe_id]]
-        self.function_sinks: dict[str, dict[str, set[str]]] = function_sinks or {}
+        # Key: function name, Value: Dict[param_name, Set[str]]
+        self.function_sinks: Dict[str, Dict[str, Set[str]]] = function_sinks or {}
         self.collect_only = collect_only
         self.file_lines = file_lines or []
-        self.imports: dict[str, str] = {}
+        self.imports: Dict[str, str] = {}
 
-    def _should_ignore(self, line_number: int, cwe_id: str | None) -> bool:
+    def _should_ignore(self, line_number: int, cwe_id: Optional[str]) -> bool:
         """Check if a finding should be ignored based on inline comments."""
         if not self.file_lines or line_number > len(self.file_lines):
             return False
@@ -83,7 +87,7 @@ class SecurityVisitor(ast.NodeVisitor):
         self.generic_visit(node)
         self.current_function = old_function
 
-    def _get_full_name(self, node: ast.AST) -> str | None:
+    def _get_full_name(self, node: ast.AST) -> Optional[str]:
         """Extract the full name of an attribute or function (e.g., os.system)."""
         if isinstance(node, ast.Name):
             return node.id
@@ -93,7 +97,7 @@ class SecurityVisitor(ast.NodeVisitor):
                 return f"{prefix}.{node.attr}"
         return None
 
-    def _resolve_full_name(self, node: ast.AST) -> str | None:
+    def _resolve_full_name(self, node: ast.AST) -> Optional[str]:
         """Resolve the full name of a node, considering imports."""
         full_name = self._get_full_name(node)
         if not full_name:
@@ -143,7 +147,7 @@ class SecurityVisitor(ast.NodeVisitor):
             return self._is_tainted(node.value)
         return False
 
-    def _find_source_pattern(self, full_call_name: str) -> str | None:
+    def _find_source_pattern(self, full_call_name: str) -> Optional[str]:
         """Search for a matching source pattern."""
         for pattern in SOURCES:
             if (
@@ -201,7 +205,7 @@ class SecurityVisitor(ast.NodeVisitor):
                         )
 
     def _check_interprocedural_sinks(
-        self, full_call_name: str, node: ast.Call, matched_pattern: str | None
+        self, full_call_name: str, node: ast.Call, matched_pattern: Optional[str]
     ) -> None:
         """Check if calling a function that has internal sinks with tainted data."""
         if self.collect_only or full_call_name not in self.function_sinks:
@@ -276,7 +280,7 @@ class SecurityVisitor(ast.NodeVisitor):
 
         self.generic_visit(node)
 
-    def _find_matched_pattern(self, full_call_name: str) -> str | None:
+    def _find_matched_pattern(self, full_call_name: str) -> Optional[str]:
         """Search for a suitable pattern for the call name."""
         for pattern in self.patterns_to_cwe:
             if (
@@ -453,8 +457,8 @@ class StaticAnalyzer:
         return bool(path_str.startswith(pattern.rstrip("/") + "/"))
 
     def analyze_file(
-        self, file_path: str | Path, config: dict | None = None
-    ) -> list[Finding]:
+        self, file_path: Union[str, Path], config: Optional[Dict] = None
+    ) -> List[Finding]:
         """Analyzes a Python file for dangerous patterns.
 
         Args:
@@ -510,8 +514,8 @@ class StaticAnalyzer:
         return []
 
     def _collect_files_to_analyze(
-        self, path: Path, include_patterns: list[str], ignore_patterns: list[str]
-    ) -> list[Path]:
+        self, path: Path, include_patterns: List[str], ignore_patterns: List[str]
+    ) -> List[Path]:
         """Collect all files to analyze based on include/ignore patterns."""
         files_to_analyze = []
         for file in path.rglob("*.py"):
@@ -537,8 +541,8 @@ class StaticAnalyzer:
         return files_to_analyze
 
     def _collect_global_sinks(
-        self, path: Path, files: list[Path], active_patterns: dict
-    ) -> dict:
+        self, path: Path, files: List[Path], active_patterns: Dict
+    ) -> Dict:
         """Collect function sinks from all files for inter-procedural analysis."""
         global_function_sinks = {}
         for file in files:
@@ -576,7 +580,7 @@ class StaticAnalyzer:
                 print(f"Error during collection in {file}: {e}", file=sys.stderr)
         return global_function_sinks
 
-    def analyze_directory(self, directory_path: str | Path) -> list[Finding]:
+    def analyze_directory(self, directory_path: Union[str, Path]) -> List[Finding]:
         """Recursively analyze all Python files in a directory.
 
         Args:
@@ -684,7 +688,7 @@ class StaticAnalyzer:
 
         return config
 
-    def run_analysis(self, path: str | Path) -> list[Finding]:
+    def run_analysis(self, path: Union[str, Path]) -> List[Finding]:
         """Start the analysis process for the specified path.
 
         Args:
