@@ -7,6 +7,7 @@ for more accurate vulnerability search and function argument analysis.
 import ast
 import fnmatch
 import sys
+
 try:
     import tomllib
 except ImportError:

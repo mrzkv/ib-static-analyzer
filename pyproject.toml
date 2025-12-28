@@ -16,6 +16,7 @@ astguard = "astguard.main:main"
 
 [tool.ruff]
 line-length = 88
+target-version = "py38"
 
 [tool.ruff.lint]
 select = ["ALL"]
@@ -33,6 +34,9 @@ ignore = [
     "RUF001",
     "RUF002",
     "RUF003",
+    "FA100",   # Missing from __future__ import annotations
+    "FA102",   # Missing from __future__ import annotations
+    "PERF203", # try-except within a loop (performance overhead is acceptable here)
 ]
 
 [tool.astguard]
