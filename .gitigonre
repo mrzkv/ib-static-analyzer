@@ -1,0 +1,6 @@
+.venv/
+venv/
+__pycache__/
+build/
+ib_static_analyzer.egg-info/
+.gitignore
