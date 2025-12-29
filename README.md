@@ -133,53 +133,45 @@ def calculate(expression):
 
 ### Быстрая установка
 
-#### Linux и macOS (Bash)
-Для установки одной командой выполните:
+#### Универсальный способ (через pip)
+Вы можете установить `astguard` напрямую из GitHub:
 ```bash
-curl -sSL https://raw.githubusercontent.com/mrzkv/ib-static-analyzer/main/install.sh | bash
+pip install git+https://github.com/mrzkv/astguard.git
 ```
+*Примечание: В некоторых системах Linux может потребоваться флаг `--break-system-packages` или использование `pipx`.*
 
-Или склонируйте репозиторий и запустите скрипт:
+#### Linux и macOS (Bash)
+Для установки одной командой (через скрипт):
 ```bash
-git clone https://github.com/mrzkv/ib-static-analyzer.git
-cd ib-static-analyzer
-chmod +x install.sh
-./install.sh
+curl -sSL https://raw.githubusercontent.com/mrzkv/astguard/main/install.sh | bash
 ```
 
 #### Windows (PowerShell)
-Для установки выполните скрипт в powershell(от имени администратора):
+Выполните в PowerShell (от имени администратора):
 ```powershell
-irm https://raw.githubusercontent.com/mrzkv/ib-static-analyzer/main/install.ps1 | iex
-```
-
-Или склонируйте репозиторий и запустите скрипт:
-```powershell
-git clone https://github.com/mrzkv/ib-static-analyzer.git
-cd ib-static-analyzer
-.\install.ps1
+irm https://raw.githubusercontent.com/mrzkv/astguard/main/install.ps1 | iex
 ```
 
 ### Требования
 
 - Python 3.8 или выше
-- Утилита `uv` (рекомендуется) или `pip`
+- Git (для установки из репозитория)
 
 ### Установка
 
 1. Склонируйте репозиторий:
 ```bash
-git clone https://github.com/mrzkv/ib-static-analyzer.git
-cd ib-static-analyzer
+git clone https://github.com/mrzkv/astguard.git
+cd astguard
 ```
 
-2. Установите проект в систему (или виртуальное окружение):
+2. Установите проект:
 ```bash
-# Использование uv (рекомендуется)
-uv pip install -e .
+# Через pip (простейший способ)
+pip install .
 
-# Или через pip
-pip install -e .
+# Или через uv (рекомендуется)
+uv pip install .
 ```
 
 После установки утилита будет доступна по команде `astguard`.

@@ -30,11 +30,11 @@ if (-not $isAdmin) {
     }
 }
 
-# PowerShell script to install ib-static-analyzer (astguard)
+# PowerShell script to install astguard
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Установка ib-static-analyzer (astguard) ===" -ForegroundColor Cyan
+Write-Host "=== Установка astguard ===" -ForegroundColor Cyan
 
 # 1. Поиск интерпретатора Python
 function Get-PythonCommand {
@@ -100,7 +100,7 @@ try {
         Write-Host "Предупреждение: Не удалось автоматически определить путь к Python Scripts." -ForegroundColor Yellow
     }
 
-    & $PYTHON_CMD -m pip install $REPO_URL --force-reinstall
+    & $PYTHON_CMD -m pip install $REPO_URL --force-reinstall --break-system-packages
     Write-Host "`nУстановка завершена успешно!" -ForegroundColor Green
     
     # 4.2 Проверка доступности команды в текущей сессии
