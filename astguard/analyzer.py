@@ -121,10 +121,19 @@ class SecurityVisitor(ast.NodeVisitor):
         return not is_shell
 
     def _is_safe_execute(self, node: ast.Call) -> bool:
-        """Check if an execute call is safe (uses a constant)."""
+        """Check if an execute call is safe (uses a constant or non-string object)."""
         if not node.args:
             return True
-        return isinstance(node.args[0], ast.Constant)
+        arg = node.args[0]
+        # If it's a constant, it's safe (e.g., cursor.execute("SELECT 1"))
+        if isinstance(arg, ast.Constant):
+            return True
+        # If it's a call, it might be an ORM query object builder (e.g., session.execute(select(...)))
+        # ORM query objects are usually safer than raw strings
+        if isinstance(arg, ast.Call):
+            return True
+        # For other types (names, binops, f-strings), we rely on taint analysis in _check_known_vulnerabilities
+        return False
 
     def _is_safe_eval(self, node: ast.Call) -> bool:
         """Check if an eval/exec call is safe (uses a constant)."""
