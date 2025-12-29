@@ -131,27 +131,6 @@ def calculate(expression):
 
 ## Установка и использование
 
-### Быстрая установка
-
-#### Универсальный способ (через pip)
-Вы можете установить `astguard` напрямую из GitHub:
-```bash
-pip install git+https://github.com/mrzkv/astguard.git
-```
-*Примечание: В некоторых системах Linux может потребоваться флаг `--break-system-packages` или использование `pipx`.*
-
-#### Linux и macOS (Bash)
-Для установки одной командой (через скрипт):
-```bash
-curl -sSL https://raw.githubusercontent.com/mrzkv/astguard/main/install.sh | bash
-```
-
-#### Windows (PowerShell)
-Выполните в PowerShell (от имени администратора):
-```powershell
-irm https://raw.githubusercontent.com/mrzkv/astguard/main/install.ps1 | iex
-```
-
 ### Требования
 
 - Python 3.8 или выше
@@ -159,19 +138,35 @@ irm https://raw.githubusercontent.com/mrzkv/astguard/main/install.ps1 | iex
 
 ### Установка
 
-1. Склонируйте репозиторий:
+Для установки `astguard` рекомендуется использовать `pipx`. Если он у вас не установлен, выполните следующие шаги:
+
+#### 1. Установка pipx
+
+**macOS:**
 ```bash
-git clone https://github.com/mrzkv/astguard.git
-cd astguard
+brew install pipx
+pipx ensurepath
 ```
 
-2. Установите проект:
+**Linux (Ubuntu/Debian):**
 ```bash
-# Через pip (простейший способ)
-pip install .
+sudo apt update
+sudo apt install pipx
+pipx ensurepath
+```
 
-# Или через uv (рекомендуется)
-uv pip install .
+**Windows:**
+```bash
+python -m pip install --user pipx
+pipx ensurepath
+```
+
+*После выполнения `pipx ensurepath` может потребоваться перезапуск терминала.*
+
+#### 2. Установка AstGuard
+
+```bash
+pipx install git+https://github.com/mrzkv/astguard.git
 ```
 
 После установки утилита будет доступна по команде `astguard`.
